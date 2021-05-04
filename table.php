@@ -3,7 +3,7 @@
 
 $servername = "localhost:3307";
 $username = "root";
-$password = "surawut";
+$password = "";
 $dbname = "monitor";
 
 // Create connection
@@ -68,8 +68,8 @@ $conn->close();
 							echo "<td>".$result_tb['No']."</td>";
 							echo "<td>".$result_tb['Temp']."*C</td>";
 							echo "<td>".$result_tb['Humi']."%</td>";
-                                                        echo "<td>".$result_tb['time']."</td>";
-							echo "<td>".$result_tb['date']."</td>";
+                                                        echo "<td>".$result_tb['Time']."</td>";
+							echo "<td>".$result_tb['Date']."</td>";
 						echo"</tr>";
 					}
 				?>
