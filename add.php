@@ -4,7 +4,7 @@ $humi = $_GET['humi'];
 
 $servername = "localhost:3307";
 $username = "root";
-$password = "surawut";
+$password = "";
 $dbname = "monitor";
 
 // Create connection
