@@ -1,18 +1,26 @@
 #include <painlessMesh.h>
 #include <WiFi.h>
-#include <HTTPClient.h>  // Only on the server node
 
-#define   MESH_PREFIX     "yourMeshNetwork"
-#define   MESH_PASSWORD   "meshPassword"
+#define   MESH_PREFIX     "whateverYouLike"
+#define   MESH_PASSWORD   "somethingSneaky"
 #define   MESH_PORT       5555
 
-Scheduler     userScheduler;
+Scheduler userScheduler; // to control your personal task
 painlessMesh  mesh;
 
+// User stub
+void sendMessage() ; // Prototype so PlatformIO doesn't complain
+
+ 
+Task taskSendMessage( TASK_SECOND * 1 , TASK_FOREVER, &sendMessage );
+
 void sendMessage() {
-  String msg = "Hello from node " + mesh.getNodeId();
-  mesh.sendBroadcast(msg);
+  String msg = "Hi from node1";
+  msg += mesh.getNodeId();
+  mesh.sendBroadcast( msg );
+  taskSendMessage.setInterval( random( TASK_SECOND * 1, TASK_SECOND * 5 ));
 }
+ 
 
 void receivedCallback(uint32_t from, String &msg) {
   Serial.printf("Received from %u: %s\n", from, msg.c_str());
@@ -24,9 +32,12 @@ void setup() {
   mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);
   mesh.onReceive(&receivedCallback);
 
-  userScheduler.setInterval(10000, sendMessage);  // Send message every 10s
+  userScheduler.addTask( taskSendMessage );
+  taskSendMessage.enable();
 }
 
 void loop() {
   mesh.update();
 }
+
+ 
