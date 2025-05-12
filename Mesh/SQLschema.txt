@@ -1,0 +1,5 @@
+CREATE TABLE mesh_data (
+    no INT AUTO_INCREMENT PRIMARY KEY,
+    node VARCHAR(20),
+    data TEXT
+);
