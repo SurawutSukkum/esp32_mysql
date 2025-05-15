@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
-$db = "MySQL_u909844480_testMesh";
-$user = "MySQL_u909844480_testMesh";
+$db = "u909844480_testMesh";
+$user = "u909844480_testMesh";
 $pass = "uXjNx9@I";
 
 $conn = new mysqli($host, $user, $pass, $db);
