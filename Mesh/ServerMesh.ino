@@ -11,7 +11,7 @@ painlessMesh  mesh;
 
 const char* ssid = "YourWiFiSSID";
 const char* password = "YourWiFiPassword";
-const char* serverUrl = "http://yourserver.com/insert.php";
+const char* serverUrl = "http://ongri.com/insert.php";
 
 void sendToMySQL(uint32_t fromNode, const String& msg) {
   if (WiFi.status() == WL_CONNECTED) {
