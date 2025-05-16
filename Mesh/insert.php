@@ -9,18 +9,15 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$node = $_POST['node'];
-$data = $_POST['data'];
+$val = $_GET['node'];
+$val1 = $_GET['data'];
+$sql = "INSERT INTO mesh_data(node,data) VALUES ($val,$val1);";
 
-$stmt = $conn->prepare("INSERT INTO mesh_data (node, data) VALUES (?, ?)");
-$stmt->bind_param("ss", $node, $data);
-
-if ($stmt->execute()) {
-    echo "Success";
+if ($conn->query($sql) === TRUE) {
+    echo "save OK2";
 } else {
-    echo "Error: " . $stmt->error;
+    echo "Error:" . $sql . "<br>" . $conn->error;
 }
 
-$stmt->close();
 $conn->close();
 ?>
