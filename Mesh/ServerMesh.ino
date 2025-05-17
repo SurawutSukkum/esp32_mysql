@@ -17,17 +17,6 @@ const char* serverUrl = "http://ongri.com/TestESP/insert.php";
 
 String msgMain=" ";
 
-
-void connectWiFi() {
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("WiFi connected");
-}
-
-
 void WGET(String msgGet)
 {
       HTTPClient http;
@@ -81,6 +70,7 @@ void sendToServer(String postData) {
     Serial.println("Wi-Fi not connected");
     Wifi_Connect();
   }
+
 }
 
 void receivedCallback(uint32_t from, String &msg) {
@@ -90,7 +80,18 @@ void receivedCallback(uint32_t from, String &msg) {
   // e.g., "node=2&Temp=294&Humi=294&Pressure=294&Led=ON"
   sendToServer(msg);
 }
+ 
+void sendMessage() {
+   int state = random(0, 2);
+  String led = (state == HIGH ? "ON" : "OFF") ;
+  String quotedLed = "'" + led + "'";
+  String randomData = generateRandomString(3); // 10-character random string
+  String msg =  "node=0&Led2=" + quotedLed + "&Led2="+quotedLed + "&Led3="+quotedLed + "&Led4="+quotedLed ;
+  mesh.sendBroadcast(msg);
+  Serial.println("Broadcasting: " + msg);
+}
 
+Task taskSendMessage(TASK_SECOND * 1, TASK_FOREVER, &sendMessage);
 void Wifi_Connect()
 {
     // Connect to Wi-Fi
@@ -98,7 +99,7 @@ void Wifi_Connect()
   WiFi.mode(WIFI_STA);
   delay(2000);
   WiFi.begin(ssid, password);
-
+  delay(2000);
   Serial.print("Connecting to Wi-Fi");
 
   int retries = 0;
@@ -128,7 +129,10 @@ void setup() {
 
   // Start mesh
   mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);
+  delay(2000);
   mesh.onReceive(receivedCallback);
+  userScheduler.addTask(taskSendMessage);
+  taskSendMessage.enable();
 }
 
 void loop() {
