@@ -59,9 +59,6 @@ String generateRandomString(int length) {
   return randomStr;
 }
 
-
-
-
 void sendToServer(String postData) {
   Wifi_Connect();
   if (WiFi.status() == WL_CONNECTED) {
@@ -91,9 +88,6 @@ void receivedCallback(uint32_t from, String &msg) {
 
   // Example: assume msg is already in query string format
   // e.g., "node=2&Temp=294&Humi=294&Pressure=294&Led=ON"
-  
-
- 
   sendToServer(msg);
 }
 
@@ -135,7 +129,6 @@ void setup() {
   // Start mesh
   mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);
   mesh.onReceive(receivedCallback);
-
 }
 
 void loop() {
