@@ -21,16 +21,16 @@ String generateRandomString(int length) {
   return randomStr;
 }
 void sendMessage() {
-  
-
-  int state = random(0, 2);  // 0 or 1
+   int state = random(0, 2);
+  String led = (state == HIGH ? "ON" : "OFF") ;
+  String quotedLed = "'" + led + "'";
   String randomData = generateRandomString(3); // 10-character random string
-  String msg = "node=2,ID="+String(mesh.getNodeId())+"&Temp="+ randomData + "&Humi="+ randomData + "&Pressure="+ randomData + "&Led="+ (state == HIGH ? "ON" : "OFF");
+  String msg =  "node=2&Temp=" + randomData + "&Humi="+ randomData + "&Pressure="+ randomData + "&Led="+quotedLed ;
   mesh.sendBroadcast(msg);
   Serial.println("Broadcasting: " + msg);
 }
 
-Task taskSendMessage(TASK_SECOND * 10, TASK_FOREVER, &sendMessage);
+Task taskSendMessage(TASK_SECOND * 1, TASK_FOREVER, &sendMessage);
 
 void setup() {
   Serial.begin(115200);
