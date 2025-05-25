@@ -15,8 +15,45 @@ Adafruit_BME280 bme;
 Scheduler userScheduler;
 painlessMesh mesh;
 
+//User Setting
+String nodeID = "8";
+String LED_Status = "OFF";
+int pinLed = 12;
+
+
 void receivedCallback(uint32_t from, String &msg) {
   Serial.printf("Received from %u: %s\n", from, msg.c_str());
+
+  String dataReceived = msg.c_str();
+  String data = "node="+nodeID+"&Led=";
+  int LEDReadNo = dataReceived.indexOf(data);
+  Serial.println("LEDReadNo===========>: "+String(LEDReadNo));
+
+  if(LEDReadNo == 0)
+  {
+      Serial.println("dataReceived===========>: "+String(dataReceived));
+      Serial.println("LEDReadNo===========>: "+String(LEDReadNo));
+      //Received from 996935125: node=8&Led=d<br>
+      //dataReceived===========>: node=8&Led=d<br>
+      //dataReceived===========>: node=8&Led=OFF<br>
+      //LEDReadNo===========>: 0
+      //LEDState===========>: d
+      //
+      //
+      if(dataReceived.indexOf("Led=ON")>0)
+      {
+       LED_Status = "ON";
+       digitalWrite(pinLed,HIGH);
+       Serial.println("LEDState===========>: "+LED_Status);
+      }
+      if(dataReceived.indexOf("Led=OFF")>0)
+      {
+       LED_Status = "OFF";
+       digitalWrite(pinLed,LOW);
+       Serial.println("LEDState===========>: "+LED_Status);
+      }
+  }
+ 
 }
 String generateRandomString(int length) {
   String chars = "0123456789";
@@ -41,11 +78,13 @@ void sendMessage() {
   Serial.println(" hPa");
 
 
-  int state = random(0, 2);
-  String led = (state == HIGH ? "ON" : "OFF") ;
+
+  String led = LED_Status;
   String quotedLed = "'" + led + "'";
   String randomData = generateRandomString(3); // 10-character random string
-  String msg =  "node=1&Temp=" + String(bme.readTemperature()) + "&Humi="+ String(bme.readHumidity()) + "&Pressure="+ String(bme.readPressure() / 100.0F) + "&Led="+quotedLed ;
+  //String msg =  "node=7&Temp=" + String(bme.readTemperature()) + "&Humi="+ String(bme.readHumidity()) + "&Pressure="+ String(bme.readPressure() / 100.0F) + "&Led="+quotedLed ;
+  String msg =  "node="+String(nodeID)+"&Temp=" + String(randomData) + "&Humi="+ String(randomData) + "&Pressure="+ String(String(randomData)) + "&Led="+quotedLed ;
+
   mesh.sendBroadcast(msg);
   Serial.println("Broadcasting: " + msg);
 }
@@ -55,8 +94,8 @@ Task taskSendMessage(TASK_SECOND * 1, TASK_FOREVER, &sendMessage);
 void setup() {
   Serial.begin(115200);
 
-
-  bme.begin(0x76);
+  pinMode(ledPin,OUTPUT);
+  //bme.begin(0x76);
 
 
   mesh.setDebugMsgTypes(ERROR | STARTUP | CONNECTION);
