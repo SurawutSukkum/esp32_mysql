@@ -35,7 +35,8 @@ void sendToServer(String postData) {
 
     String url = postData;
     Serial.println("Sending to: " + url);
-    Serial1.println("Sending to: " + url);
+    Serial1.println(url);
+    delay(1000);
     
 }
 
@@ -49,7 +50,7 @@ void receivedCallback(uint32_t from, String &msg) {
 
 void sendMessage() {
   while (Serial1.available()) { 
-  String msg = Serial1.readString();
+  String msg = Serial1.readStringUntil('\r\n');
   mesh.sendBroadcast(msg);
   Serial.println("Server Broadcasting: " + msg);
     }
@@ -59,7 +60,7 @@ void sendMessage() {
 Task taskSendMessage(TASK_SECOND * 1, TASK_FOREVER, &sendMessage);
 void setup() {
   Serial.begin(115200);
-  Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1); 
+  Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1); // เริ่มต้นใช้งาน Serial1 ที่ความเร็ว (baud rate) 9600 พร้อมกำหนดขา RX, TX ใหม่
   // Start mesh
   mesh.setDebugMsgTypes(ERROR | STARTUP | CONNECTION);
   mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);
