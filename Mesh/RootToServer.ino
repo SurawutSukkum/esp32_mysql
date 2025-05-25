@@ -16,7 +16,29 @@ String generateRandomString(int length) {
   }
   return randomStr;
 }
+void sendToServerLED(int Node) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String url = "https://ongri.com/TestESP/ReadLEDStatus.php?node=" + String(Node);
+    Serial.println("Sending LED to: " + url);
 
+    http.begin(url);
+    int httpCode = http.GET();
+    Serial.println("httpCode LED: " + httpCode);
+
+    if (httpCode > 0) {
+      String payload = http.getString();
+      Serial.println("Server response LED Status: " + payload);
+    } else {
+      Serial.println("HTTP GET failed, error: " + http.errorToString(httpCode));
+    }
+
+    http.end();
+  } else {
+    Serial.println("Wi-Fi not connected");
+    Wifi_Connect();
+  }
+}
 void sendToServer(String postData) {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
@@ -39,8 +61,10 @@ void sendToServer(String postData) {
     Serial.println("Wi-Fi not connected");
     Wifi_Connect();
   }
-
 }
+
+
+ 
 
 void Wifi_Connect()
 {
@@ -90,7 +114,12 @@ void loop() {
        Serial.println("Server Broadcasting: " + msg);
        //String msg = "node=7&Temp=127&Humi=127&Pressure=127&Led='ON'";
       sendToServer(msg);
-      delay(1000);
-    } 
+      for(int node=0;node<9;node++)
+       {
+         sendToServerLED(node);
+       }
+      delay(100);
+    }
+ 
 }
  
